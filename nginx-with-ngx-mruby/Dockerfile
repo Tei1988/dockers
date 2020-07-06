@@ -1,7 +1,7 @@
 FROM alpine:3.10 AS builder
 
-ENV NGINX_VERSION=nginx-1.17.9
-
+ENV NGINX_SRC=nginx-1.19.0 \
+    NGX_MRUBY_VERSION=v2.2.3
 WORKDIR /tmp
 
 RUN apk --update add \
@@ -31,16 +31,16 @@ RUN apk --update add \
       ruby-dev \
       openssl-dev \
       zlib-dev
-RUN git clone https://github.com/Tei1988/ngx_mruby.git --branch=support-additional-libraries
-RUN git clone https://github.com/vision5/ngx_devel_kit.git
-RUN wget -O ${NGINX_VERSION}.tar.gz http://nginx.org/download/${NGINX_VERSION}.tar.gz
-RUN tar zxvf ${NGINX_VERSION}.tar.gz
+RUN git clone --depth=1 https://github.com/matsumotory/ngx_mruby.git -b ${NGX_MRUBY_VERSION}
+RUN git clone --depth=1 https://github.com/vision5/ngx_devel_kit.git
+RUN wget -O ${NGINX_SRC}.tar.gz http://nginx.org/download/${NGINX_SRC}.tar.gz
+RUN tar zxvf ${NGINX_SRC}.tar.gz
 
 WORKDIR /tmp/ngx_mruby
 
 RUN NGX_MRUBY_LIBS="fts" \
     BUILD_DYNAMIC_MODULE=1 \
-    NGINX_SRC_ENV=/tmp/${NGINX_VERSION} \
+    NGINX_SRC_ENV=/tmp/${NGINX_SRC} \
     NGINX_CONFIG_OPT_ENV="\
       --prefix=/etc/nginx \
       --sbin-path=/usr/sbin/nginx \
@@ -86,14 +86,16 @@ RUN NGX_MRUBY_LIBS="fts" \
       --with-ld-opt=-Wl,--as-needed \
       --add-dynamic-module=/tmp/ngx_devel_kit" \
     ./build.sh
-RUN strip /tmp/nginx-1.17.9/objs/ndk_http_module.so && \
-    strip /tmp/nginx-1.17.9/objs/ngx_http_mruby_module.so
+RUN strip /tmp/${NGINX_SRC}/objs/ndk_http_module.so && \
+    strip /tmp/${NGINX_SRC}/objs/ngx_http_mruby_module.so
+RUN mv /tmp/${NGINX_SRC}/objs/ndk_http_module.so /tmp/ndk_http_module.so && \
+    mv /tmp/${NGINX_SRC}/objs/ngx_http_mruby_module.so /tmp/ngx_http_mruby_module.so
 
-FROM nginx:1.17.9-alpine
+FROM nginx:1.19.0-alpine
 
 RUN apk add --no-cache fts
-COPY --from=builder /tmp/nginx-1.17.9/objs/ndk_http_module.so /usr/lib/nginx/modules/ndk_http_module.so
-COPY --from=builder /tmp/nginx-1.17.9/objs/ngx_http_mruby_module.so /usr/lib/nginx/modules/ngx_http_mruby_module.so
+COPY --from=builder /tmp/ndk_http_module.so /usr/lib/nginx/modules/ndk_http_module.so
+COPY --from=builder /tmp/ngx_http_mruby_module.so /usr/lib/nginx/modules/ngx_http_mruby_module.so
 
 ONBUILD COPY docker/hook /etc/nginx/hook
 ONBUILD COPY docker/conf /etc/nginx
