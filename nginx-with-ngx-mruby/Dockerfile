@@ -1,6 +1,6 @@
 FROM alpine:3.10 AS builder
 
-ENV NGINX_SRC=nginx-1.19.0 \
+ENV NGINX_SRC=nginx-1.19.1 \
     NGX_MRUBY_VERSION=v2.2.3
 WORKDIR /tmp
 
@@ -91,7 +91,7 @@ RUN strip /tmp/${NGINX_SRC}/objs/ndk_http_module.so && \
 RUN mv /tmp/${NGINX_SRC}/objs/ndk_http_module.so /tmp/ndk_http_module.so && \
     mv /tmp/${NGINX_SRC}/objs/ngx_http_mruby_module.so /tmp/ngx_http_mruby_module.so
 
-FROM nginx:1.19.0-alpine
+FROM nginx:1.19.1-alpine
 
 RUN apk add --no-cache fts
 COPY --from=builder /tmp/ndk_http_module.so /usr/lib/nginx/modules/ndk_http_module.so
