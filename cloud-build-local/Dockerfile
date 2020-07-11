@@ -12,6 +12,7 @@ RUN wget -O /tmp/base/bin/cloud-build-local https://storage.googleapis.com/local
 RUN wget -O google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz && \
     tar zxvf google-cloud-sdk.tar.gz && \
     cp /tmp/google-cloud-sdk/bin/gcloud /tmp/base/bin && \
+    cp /tmp/google-cloud-sdk/bin/docker-credential-gcloud /tmp/base/bin && \
     cp -r /tmp/google-cloud-sdk/lib /tmp/base/
 RUN wget -O docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz && \
     tar zxvf docker.tgz && \
