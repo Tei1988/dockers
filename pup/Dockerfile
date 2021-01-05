@@ -1,4 +1,4 @@
-FROM golang:1.14.4-buster AS builder
+FROM golang:1.15.6-buster AS builder
 ENV GOOS=linux \
     CGO_ENABLED=0 \
     GOARCH=amd64 \

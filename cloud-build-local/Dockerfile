@@ -17,7 +17,7 @@ RUN wget -O google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/r
 RUN wget -O docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz && \
     tar zxvf docker.tgz && \
     mv docker/* base/bin
-FROM python:3.9.0-alpine3.12
+FROM python:3.9.1-alpine3.12
 ENV GLIBC_VERSION=2.32-r0
 RUN apk --no-cache add wget && \
     wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
