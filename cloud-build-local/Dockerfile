@@ -1,6 +1,6 @@
-FROM alpine:3.12 AS download
+FROM alpine:3.14 AS download
 ENV CLOUD_BUILD_LOCAL_VERSION=0.5.2\
-    GCLOUD_VERSION=319.0.0\
+    GCLOUD_VERSION=347.0.0\
     DOCKER_VERSION=19.03.8
 WORKDIR /tmp
 
@@ -17,7 +17,7 @@ RUN wget -O google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/r
 RUN wget -O docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz && \
     tar zxvf docker.tgz && \
     mv docker/* base/bin
-FROM python:3.9.1-alpine3.12
+FROM python:3.9.6-alpine3.14
 ENV GLIBC_VERSION=2.32-r0
 RUN apk --no-cache add wget && \
     wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
