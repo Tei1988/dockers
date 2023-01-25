@@ -1,5 +1,5 @@
-FROM node:14.17.3-alpine3.14
+FROM node:18.13.0-alpine3.17
 
-RUN npm install --global prettier@2.3.2 && \
+RUN npm install --global prettier@2.8.3 && \
     npm cache clean --force
 ENTRYPOINT [ "prettier" ]
