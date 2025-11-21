@@ -1,9 +1,9 @@
 # Stage 1: Builder
 FROM node:24-alpine AS builder
-ARG GEMINI_CLI_VERSION
+ARG VIBE_KANBAN_VERSION
 WORKDIR /app
 RUN apk --no-cache add python3 build-base
-RUN npm install @google/gemini-cli@${GEMINI_CLI_VERSION}
+RUN npm install vibe-kanban@${VIBE_KANBAN_VERSION}
 
 # Stage 2: Final Image
 FROM node:24-alpine
@@ -12,4 +12,4 @@ COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/package-lock.json /app/package-lock.json
 RUN apk --no-cache add bash tini
 WORKDIR /app
-ENTRYPOINT ["tini", "--", "/app/node_modules/.bin/gemini"]
+ENTRYPOINT ["tini", "--", "/app/node_modules/.bin/vibe-kanban"]
